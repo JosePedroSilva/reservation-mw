@@ -4,4 +4,5 @@ asyncpg
 sqlalchemy[asyncio]
 aiokafka
 pydantic
+pydantic[email]
 python-json-logger
