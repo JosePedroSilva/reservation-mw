@@ -1,0 +1,35 @@
+{
+  "name": "ReservationsMiddleware",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "reservation_middleware",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+        "vscode": {
+            "settings": {
+                "python.pythonPath": "/usr/local/bin/python",
+                "python.formatting.provider": "black",
+                "python.formatting.blackArgs": ["--config", "/workspaces/${localWorkspaceFolderBasename}/pyproject.toml"],
+                "python.linting.flake8Enabled": true,
+                "python.linting.flake8Args": ["--config", "/workspaces/${localWorkspaceFolderBasename}/pyproject.toml"],
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter",
+                    "editor.formatOnSave": true,
+                    "editor.codeActionsOnSave": {
+                        "source.organizeImports": "explicit"
+                    }
+                }
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.flake8",
+                "ms-python.black-formatter",
+                "ms-azuretools.vscode-docker",
+                "tamasfe.even-better-toml",
+                "VisualStudioExptTeam.vscodeintellicode",
+                "GitHub.copilot" 
+            ]
+        }
+    },
+  "postCreateCommand": "pip install -e services/reservation-middleware -e services/audit-middleware && pre-commit install"
+}
