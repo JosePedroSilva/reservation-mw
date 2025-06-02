@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+asyncpg
+sqlalchemy[asyncio]
+aiokafka
+pydantic
+python-json-logger
