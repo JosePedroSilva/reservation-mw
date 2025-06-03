@@ -71,3 +71,20 @@ async def list_reservations(
   result = await session.execute(stmt)  
   reservations = result.scalars().all() 
   return reservations
+
+@app.get(
+  "/audits",
+  response_model=list[schemas.ReservationAudit],
+  status_code=200,
+)
+async def list_audits(
+  session: AsyncSession = Depends(db.get_db),
+) -> list[schemas.ReservationAudit]:
+  """
+  Execute a simple SELECT * FROM reservation_audit
+  and return a list of ORM objects, which Pydantic will convert to JSON.
+  """
+  stmt = select(models.ReservationAudit)          
+  result = await session.execute(stmt)  
+  audits = result.scalars().all() 
+  return audits

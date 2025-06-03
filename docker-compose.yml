@@ -11,7 +11,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "user"]
+      test: ["CMD", "pg_isready", "-U", "Reservation"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -69,5 +69,7 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://user:pass@postgres:5432/reservations
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      RESERVATIONS_TOPIC: reservations
+      KAFKA_CONSUMER_GROUP: audit-middleware
     ports:
       - "8001:8001"

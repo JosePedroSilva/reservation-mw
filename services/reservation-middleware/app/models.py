@@ -1,3 +1,4 @@
+#TODO: Refactor the models to use a shared library
 from datetime import datetime, date
 from sqlalchemy import Column, Integer, String, Date, DateTime, JSON, ForeignKey, Enum as SAEnum
 from sqlalchemy.orm import declarative_base, relationship

@@ -1,3 +1,5 @@
 aiokafka
 fastapi
 uvicorn[standard]
+sqlalchemy[asyncio]
+asyncpg
