@@ -1,6 +1,8 @@
 from uuid import uuid4
 from datetime import datetime
 
+from app.shared.enums import EventType
+
 from fastapi import FastAPI, Depends, status, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -42,7 +44,13 @@ async def create_reservation(
     "requestId": str(uuid4()),
   }
 
-  await kafka.publish(envelope)
+  kafka_envelope = {
+    "id": reservation.id,
+    "data": reservation_data,
+    "event_type": EventType.CREATED,
+  }
+
+  await kafka.publish(kafka_envelope)
 
   return envelope
 
