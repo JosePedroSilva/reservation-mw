@@ -69,3 +69,5 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://user:pass@postgres:5432/reservations
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8001:8001"

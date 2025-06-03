@@ -1,4 +1,3 @@
 aiokafka
-asyncpg
-sqlalchemy[asyncio]
-python-json-logger
+fastapi
+uvicorn[standard]
