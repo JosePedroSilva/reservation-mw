@@ -7,18 +7,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from . import schemas, db, models
 from .consumer import consume_forever
 
-from fastapi import FastAPI
+import logging
+from .logging_config import setup_logging
+from .requestMiddleware import RequestIDMiddleware
 
+setup_logging()
 app = FastAPI(title="Audit Middleware", docs_url=None, redoc_url=None)
+app.add_middleware(RequestIDMiddleware)
+
+log = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def startup_event():
     await db.init_models()
-    print("Models initialized successfully")
+    log.info("Models initialized successfully")
 
     loop = asyncio.get_event_loop()
     loop.create_task(consume_forever())
-    print("Kafka consumer started successfully")
+    log.info("Kafka consumer started successfully")
 
 @app.get("/healthz",)
 async def health_check():
