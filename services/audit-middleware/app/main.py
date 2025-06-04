@@ -24,6 +24,7 @@ async def startup_event():
 async def health_check():
     return {"status": "ok"}
 
+# Leave this endpoint for testing purposes, would remove in production
 @app.get(
   "/reservations-audit",
   response_model=list[schemas.ReservationAudit],
