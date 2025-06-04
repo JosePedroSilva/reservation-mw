@@ -7,17 +7,20 @@ from sqlalchemy import select
 
 import logging
 from .logging_config import setup_logging
+from .requestMiddleware import RequestIDMiddleware
 
 from .enums import EventType
 
 from . import db, schemas, models, kafka
 
+setup_logging()
 app = FastAPI(title="Reservation Middleware")
+app.add_middleware(RequestIDMiddleware)
+
 log = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def _startup() -> None:
-  setup_logging()
   log.info("Starting Reservation Middleware")
   await db.init_models()
   await kafka.start_producer() 
