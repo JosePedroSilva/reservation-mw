@@ -5,14 +5,23 @@ from fastapi import FastAPI, Depends, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
+import logging
+from .logging_config import setup_logging
+from .requestMiddleware import RequestIDMiddleware
+
 from .enums import EventType
 
 from . import db, schemas, models, kafka
 
+setup_logging()
 app = FastAPI(title="Reservation Middleware")
+app.add_middleware(RequestIDMiddleware)
+
+log = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def _startup() -> None:
+  log.info("Starting Reservation Middleware")
   await db.init_models()
   await kafka.start_producer() 
 
@@ -26,6 +35,8 @@ async def create_reservation(
   request: Request,
   session: AsyncSession = Depends(db.get_db),
 ) -> schemas.ReservationResponse:
+  
+  log.info("create_reservation_received",extra={"payload": payload.model_dump()})
   
   reservation = models.Reservation(**payload.model_dump())
   session.add(reservation)
@@ -51,9 +62,11 @@ async def create_reservation(
   }
 
   await kafka.publish(kafka_envelope)
+  log.info("kafka_event_sent", extra={"reservation_id": reservation.id, "topic": kafka.TOPIC})
 
   return envelope
 
+# Leave this endpoint for testing purposes, would remove in production
 @app.get(
   "/reservations",
   response_model=list[schemas.Reservation],

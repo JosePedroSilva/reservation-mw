@@ -9,7 +9,6 @@ TOPIC     = "reservations"
 log = logging.getLogger(__name__)
 producer: AIOKafkaProducer | None = None
 
-
 async def start_producer() -> None:
   global producer
   if producer is None:
@@ -20,12 +19,10 @@ async def start_producer() -> None:
     await producer.start()
     log.info("Kafka producer started (bootstrap=%s)", BOOTSTRAP)
 
-
 async def stop_producer() -> None:
   if producer:
     await producer.stop()
     log.info("Kafka producer stopped")
-
 
 async def publish(event: dict[str, Any]) -> None:
   if producer is None:
