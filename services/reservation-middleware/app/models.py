@@ -8,7 +8,7 @@ Base = declarative_base()
 class Reservation(Base):
     __tablename__ = 'reservations'
     
-    id = Column(Integer, primary_key=True, autoincrement=True) # TODO: Add UUID support
+    id = Column(Integer, primary_key=True, autoincrement=True)
     source = Column(String(50), nullable=False, default="web")
 
     guest = Column(JSON, nullable=False)  # JSON field to store guest information  first name, last name, email, phone

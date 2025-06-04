@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: reservations
     ports:
       - "5432:5432"
-    healthcheck: # TODO: healthcheck is not working properly
+    healthcheck:
       test: ["CMD", "pg_isready", "-U", "user", "-d", "reservations"]
       interval: 5s
       timeout: 5s
