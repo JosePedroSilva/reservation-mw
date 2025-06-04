@@ -1,11 +1,11 @@
 from uuid import uuid4
 from datetime import datetime
 
-from app.shared.enums import EventType
-
-from fastapi import FastAPI, Depends, status, Request, Response
+from fastapi import FastAPI, Depends, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+
+from .enums import EventType
 
 from . import db, schemas, models, kafka
 
@@ -54,7 +54,6 @@ async def create_reservation(
 
   return envelope
 
-#TODO: Remove this endpoint this is for testing purposes only
 @app.get(
   "/reservations",
   response_model=list[schemas.Reservation],
@@ -63,28 +62,7 @@ async def create_reservation(
 async def list_reservations(
   session: AsyncSession = Depends(db.get_db),
 ) -> list[schemas.Reservation]:
-  """
-  Execute a simple SELECT * FROM reservations
-  and return a list of ORM objects, which Pydantic will convert to JSON.
-  """
   stmt = select(models.Reservation)          
   result = await session.execute(stmt)  
   reservations = result.scalars().all() 
   return reservations
-
-@app.get(
-  "/audits",
-  response_model=list[schemas.ReservationAudit],
-  status_code=200,
-)
-async def list_audits(
-  session: AsyncSession = Depends(db.get_db),
-) -> list[schemas.ReservationAudit]:
-  """
-  Execute a simple SELECT * FROM reservation_audit
-  and return a list of ORM objects, which Pydantic will convert to JSON.
-  """
-  stmt = select(models.ReservationAudit)          
-  result = await session.execute(stmt)  
-  audits = result.scalars().all() 
-  return audits

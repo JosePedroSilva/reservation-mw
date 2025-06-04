@@ -19,14 +19,14 @@ engine = create_async_engine(
   pool_pre_ping=True,
 )
 
-SessionLocal = async_sessionmaker(
+async_session = async_sessionmaker(
   bind=engine,
   expire_on_commit=False,
 )
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-  async with SessionLocal() as session:
+  async with async_session() as session:
     try:
       yield session
     except SQLAlchemyError:
@@ -40,3 +40,7 @@ async def init_models() -> None:
   from .models import Base  
   async with engine.begin() as conn:
     await conn.run_sync(Base.metadata.create_all)
+  
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session() as session:
+        yield session
