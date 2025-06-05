@@ -1,5 +1,6 @@
 from uuid import uuid4
 from datetime import datetime
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Depends, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,20 +15,21 @@ from .enums import EventType
 from . import db, schemas, models, kafka
 
 setup_logging()
-app = FastAPI(title="Reservation Middleware")
-app.add_middleware(RequestIDMiddleware)
 
 log = logging.getLogger(__name__)
 
-@app.on_event("startup")
-async def _startup() -> None:
-  log.info("Starting Reservation Middleware")
-  await db.init_models()
-  await kafka.start_producer() 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    log.info("Starting Reservation Middleware")
+    await db.init_models()
+    await kafka.start_producer()
 
-@app.on_event("shutdown")
-async def _shutdown() -> None:
-    await kafka.stop_producer() 
+    yield
+
+    await kafka.stop_producer()
+
+app = FastAPI(title="Reservation Middleware", lifespan=lifespan)
+app.add_middleware(RequestIDMiddleware)
 
 @app.post("/reservations", status_code=status.HTTP_201_CREATED)
 async def create_reservation(
