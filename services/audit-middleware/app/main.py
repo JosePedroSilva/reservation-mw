@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Depends
 from sqlalchemy import select
@@ -12,19 +13,21 @@ from .logging_config import setup_logging
 from .requestMiddleware import RequestIDMiddleware
 
 setup_logging()
-app = FastAPI(title="Audit Middleware", docs_url=None, redoc_url=None)
-app.add_middleware(RequestIDMiddleware)
-
 log = logging.getLogger(__name__)
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await db.init_models()
     log.info("Models initialized successfully")
 
     loop = asyncio.get_event_loop()
     loop.create_task(consume_forever())
     log.info("Kafka consumer started successfully")
+
+    yield
+  
+app = FastAPI(title="Audit Middleware", docs_url=None, redoc_url=None, lifespan=lifespan)
+app.add_middleware(RequestIDMiddleware)
 
 @app.get("/healthz",)
 async def health_check():
