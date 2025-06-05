@@ -5,8 +5,7 @@ request_id_ctx: ContextVar[str] = ContextVar("request_id", default="-")
 class JsonFormatter(logging.Formatter):
   def format(self, record: logging.LogRecord) -> str:
     payload = {
-      "ts": datetime.datetime.utcnow()
-                        .isoformat(timespec="milliseconds") + "Z",
+      "ts": datetime.datetime.utcnow().isoformat(timespec="milliseconds") + "Z",
       "level": record.levelname.lower(),
       "msg":   record.getMessage(),
       "logger": record.name,
