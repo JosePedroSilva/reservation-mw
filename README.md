@@ -28,7 +28,8 @@ Before you begin, ensure you have the following installed:
 2.  **Build and Start the Services**:
     Use Docker Compose to build the images and start all services in detached mode:
     ```bash
-    docker-compose up -d --build
+    docker compose build
+    docker compose up -d
     ```
     This command will start:
     * `postgres` (Database)
@@ -40,7 +41,7 @@ Before you begin, ensure you have the following installed:
 3.  **Verify Services are Running**:
     You can check the status of the running containers:
     ```bash
-    docker-compose ps
+    docker compose ps
     ```
     You should see all services listed with a state of `Up` or `healthy`.
     
@@ -89,11 +90,11 @@ You can view the logs for all services or individual services using Docker Compo
 
 * **View logs for all services (follow mode):**
     ```bash
-    docker-compose logs -f
+    docker compose logs -f
     ```
 * **View logs for a specific service (e.g., `reservation-middleware`):**
     ```bash
-    docker-compose logs -f reservation-middleware
+    docker compose logs -f reservation-middleware
     ```
     Replace `reservation-middleware` with `audit-middleware`, `kafka`, or `postgres` as needed.
 
